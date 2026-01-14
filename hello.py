@@ -1,0 +1,1 @@
+print ("Walang late next week")
