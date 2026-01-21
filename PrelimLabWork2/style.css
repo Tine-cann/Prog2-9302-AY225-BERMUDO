@@ -1,0 +1,107 @@
+/* Body and background */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #2a3b9e, #613ff6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Card container */
+.login-card {
+    background: white;
+    padding: 40px 100px;
+    border-radius: 15px;
+    width: 350px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Headings */
+.login-card h2 {
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #2575fc;
+    box-shadow: 0 0 8px rgba(37,117,252,0.5);
+    outline: none;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button[type="submit"] {
+    background-color: #2575fc;
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background-color: #1a5ed9;
+}
+
+#downloadBtn {
+    margin-top: 15px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+#downloadBtn:hover {
+    background-color: #45a049;
+}
+
+#logoutBtn {
+    background-color: #aaa;
+    color: white;
+}
+
+#logoutBtn:hover {
+    background-color: #888;
+}
+
+/* Feedback messages */
+.toast {
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none; /* Hidden by default, shown via JS */
+}
+
+#timestamp,
+#attendanceStatus {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #555;
+}
+
+

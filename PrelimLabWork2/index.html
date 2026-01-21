@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Metadata about the document -->
+    <meta charset="UTF-8"> <!-- Sets character encoding to UTF-8 -->
+    <title>Attendance Login</title> <!-- The title displayed in the browser tab -->
+    
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main container for the login form card -->
+    <div class="login-card">
+        
+        <!-- Heading for the login card -->
+        <h2>Attendance Login</h2>
+
+        <!-- Login form -->
+        <form id="loginForm">
+            <!-- Username input field -->
+            <input type="text" id="username" placeholder="Username" required>
+            
+            <!-- Password input field (hidden characters) -->
+            <input type="password" id="password" placeholder="Password" required>
+            
+            <!-- Submit button to log in -->
+            <button type="submit">Log In</button>
+        </form>
+
+        <!-- Paragraph to display success or error messages -->
+        <p id="message" class="toast"></p>
+        
+        <!-- Paragraph to show the login timestamp -->
+        <p id="timestamp"></p>
+        
+        <!-- Paragraph to show attendance confirmation -->
+        <p id="attendanceStatus"></p>
+
+        <!-- Button to download attendance as CSV file, hidden by default -->
+        <button id="downloadBtn" style="display:none;">Download Attendance (CSV)</button>
+    </div>
+
+    <!-- Link to external JavaScript file that handles login functionality -->
+    <script src="script.js"></script>
+</body>
+</html>
+
