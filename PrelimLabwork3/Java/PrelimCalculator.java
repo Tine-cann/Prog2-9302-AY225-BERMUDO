@@ -219,11 +219,3 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         SwingUtilities.invokeLater(PrelimCalculator::new);
     }
 }
-
-
-
-
-
-
-
-
