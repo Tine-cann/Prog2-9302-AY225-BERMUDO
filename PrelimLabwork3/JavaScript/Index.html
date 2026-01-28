@@ -4,108 +4,263 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prelim Exam Calculator</title>
+
 <style>
-body { font-family: 'Segoe UI', sans-serif; background:#f5f5f5; margin:0; padding:0; }
-.container { max-width:700px; margin:30px auto; background:#fff; padding:25px 35px; border-radius:15px; box-shadow:0 8px 20px rgba(0,0,0,0.1);}
-h1 { text-align:center; color:#007bff; margin-bottom:25px;}
-.input-group { margin:15px 0; display:flex; justify-content:space-between; align-items:center; }
-.input-group label { font-weight:bold; width:220px; }
-.input-group input { width:120px; padding:10px; border:1px solid #ccc; border-radius:10px; font-size:14px; text-align:center; }
-button { display:block; width:100%; padding:15px; margin-top:20px; background:linear-gradient(135deg,#007bff,#0056b3); color:white; font-size:16px; border:none; border-radius:12px; cursor:pointer; transition:all 0.3s ease; }
-button:hover { background:linear-gradient(135deg,#0056b3,#003f7f); }
-.error-message { color:red; font-weight:bold; margin-top:10px; text-align:center; }
-.results { margin-top:25px; padding:20px; border-radius:12px; background:#f0f8ff; font-family:Consolas, monospace; white-space:pre-line; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);}
+/* ---------------- Body ---------------- */
+body {
+    font-family: 'Segoe UI Emoji', sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* ---------------- Container ---------------- */
+.container {
+    max-width: 800px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 25px 35px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* ---------------- Header ---------------- */
+h1 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 25px;
+}
+
+/* ---------------- Section Header ---------------- */
+.section-header {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0066cc;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0066cc;
+}
+
+/* ---------------- Input Groups ---------------- */
+.input-group {
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input-group label {
+    font-weight: bold;
+    width: 300px;
+    font-size: 14px;
+}
+
+.input-group input,
+.input-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* ---------------- Specific Dropdown Widths ---------------- */
+#enrolleeType {
+    width: 200px; /* Wider dropdown for enrollment type */
+}
+
+#hasAbsences {
+    width: 100px; /* Narrower dropdown for Yes/No */
+}
+
+.input-group input:disabled,
+.input-group select:disabled {
+    background-color: #f0f0f0;
+    color: #999;
+}
+
+/* ---------------- Button ---------------- */
+button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    background: linear-gradient(135deg,#007bff,#0056b3);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(135deg,#0056b3,#003f7f);
+}
+
+/* ---------------- Results Panel ---------------- */
+.results {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f0f8ff;
+    font-family: Consolas, monospace;
+    white-space: pre-line;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.results span {
+    display: block;
+    margin-bottom: 5px;
+}
 </style>
 </head>
 <body>
+
 <div class="container">
-<h1>Prelim Exam Calculator</h1>
+    <h1>📊 Prelim Exam Calculator</h1>
 
-<!-- Input Fields -->
-<div class="input-group"><label>Attendance (0-100):</label><input type="number" id="attendance" min="0" max="100" value="100"></div>
-<div class="input-group"><label>Lab Work 1 (0-100):</label><input type="number" id="lab1" min="0" max="100" value="100"></div>
-<div class="input-group"><label>Lab Work 2 (0-100):</label><input type="number" id="lab2" min="0" max="100" value="100"></div>
-<div class="input-group"><label>Lab Work 3 (0-100):</label><input type="number" id="lab3" min="0" max="100" value="100"></div>
+    <!-- Enrollment -->
+    <div class="section-header">📋 Enrollment Information</div>
+    <div class="input-group">
+        <label>Enrollment Type:</label>
+        <select id="enrolleeType" onchange="updateFields()">
+            <option value="Regular">Regular Enrollee</option>
+            <option value="Late">Late Enrollee</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label>If Late, Start Week (1-5):</label>
+        <input type="number" id="startWeek" min="1" max="5" disabled>
+    </div>
 
-<!-- Inline error message -->
-<div id="errorMessage" class="error-message"></div>
+    <!-- Absences -->
+    <div class="section-header">📋 Absence Information</div>
+    <div class="input-group">
+        <label>Do you have absences?</label>
+        <select id="hasAbsences" onchange="updateFields()">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label>Excused Absences (0-5):</label>
+        <input type="number" id="excusedAbsences" min="0" max="5" disabled>
+    </div>
+    <div class="input-group">
+        <label>Unexcused Absences (0-5):</label>
+        <input type="number" id="unexcusedAbsences" min="0" max="5" disabled>
+    </div>
 
-<!-- Calculate Button -->
-<button onclick="calculatePrelim()">Calculate Prelim Exam Requirements</button>
+    <!-- Labs -->
+    <div class="section-header">📚 Lab Work Scores</div>
+    <div class="input-group"><label>Lab Work 1 (0-100):</label><input type="number" id="lab1" min="0" max="100" value="100"></div>
+    <div class="input-group"><label>Lab Work 2 (0-100):</label><input type="number" id="lab2" min="0" max="100" value="100"></div>
+    <div class="input-group"><label>Lab Work 3 (0-100):</label><input type="number" id="lab3" min="0" max="100" value="100"></div>
 
-<!-- Results -->
-<div class="results" id="results"></div>
+    <button onclick="calculatePrelim()">Calculate Prelim Exam Requirements</button>
+
+    <div class="results" id="results"></div>
 </div>
 
 <script>
-// Restrict input to numbers 0-100
-document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener('input', () => {
-        let value = input.value.replace(/[^0-9]/g,'');
-        if(value!==''){
-            if(parseInt(value)>100) value='100';
-            if(parseInt(value)<0) value='0';
+// Enable/disable fields based on selections
+function updateFields(){
+    const type = document.getElementById('enrolleeType').value;
+    const lateField = document.getElementById('startWeek');
+    lateField.disabled = type !== "Late";
+    if(type!=="Late") lateField.value = '';
+
+    const hasAbs = document.getElementById('hasAbsences').value === "Yes";
+    document.getElementById('excusedAbsences').disabled = !hasAbs;
+    document.getElementById('unexcusedAbsences').disabled = !hasAbs;
+    if(!hasAbs){ 
+        document.getElementById('excusedAbsences').value=''; 
+        document.getElementById('unexcusedAbsences').value=''; 
+    }
+}
+
+// Restrict input to numbers and min/max
+document.querySelectorAll('input[type=number]').forEach(i=>{
+    i.addEventListener('input',()=>{ 
+        let val = i.value.replace(/[^0-9]/g,''); 
+        if(val!==''){
+            const min = parseInt(i.min), max = parseInt(i.max);
+            val = Math.min(Math.max(parseInt(val),min),max);
         }
-        input.value = value;
+        i.value = val;
     });
 });
 
-function calculatePrelim() {
-    const attendance = document.getElementById('attendance').value.trim();
-    const lab1 = document.getElementById('lab1').value.trim();
-    const lab2 = document.getElementById('lab2').value.trim();
-    const lab3 = document.getElementById('lab3').value.trim();
+// Main calculation
+function calculatePrelim(){
     const results = document.getElementById('results');
-    const errorMessage = document.getElementById('errorMessage');
+    results.innerHTML = "";
 
-    // --- Clear previous messages ---
-    results.innerText = "";
-    errorMessage.innerText = "";
+    const enrollee = document.getElementById('enrolleeType').value;
+    const startWeek = parseInt(document.getElementById('startWeek').value) || 1;
 
-    // --- Required fields check ---
-    if(!attendance || !lab1 || !lab2 || !lab3){
-        errorMessage.innerText = "Please fill in all fields!";
+    const hasAbs = document.getElementById('hasAbsences').value === "Yes";
+    const excused = parseInt(document.getElementById('excusedAbsences').value)||0;
+    const unexcused = parseInt(document.getElementById('unexcusedAbsences').value)||0;
+
+    const lab1 = parseFloat(document.getElementById('lab1').value);
+    const lab2 = parseFloat(document.getElementById('lab2').value);
+    const lab3 = parseFloat(document.getElementById('lab3').value);
+
+    // Check required fields
+    if(isNaN(lab1)||isNaN(lab2)||isNaN(lab3) ||
+       (enrollee==="Late" && isNaN(startWeek)) ||
+       (hasAbs && (isNaN(excused) || isNaN(unexcused)))){
+        results.innerHTML="<span style='color:red;font-weight:bold;'>Please fill in all required fields correctly!</span>";
         return;
     }
 
-    const att = parseFloat(attendance);
-    const l1 = parseFloat(lab1);
-    const l2 = parseFloat(lab2);
-    const l3 = parseFloat(lab3);
+    // Attendance calculation
+    let totalWeeks = enrollee==="Late" ? 6-startWeek : 5;
+    let attendedWeeks = totalWeeks - unexcused;
+    let attendanceGrade = Math.max(0,100-(unexcused*20));
 
-    // --- Weighted calculations ---
-    const labAvg = (l1+l2+l3)/3;
-    const classStanding = att*0.4 + labAvg*0.6;
-
-    const requiredForPassing = (75 - classStanding*0.7)/0.3;
-    const requiredForExcellent = (100 - classStanding*0.7)/0.3;
-    const maxAchievable = classStanding*0.7 + 100*0.3;
-
-    let output = "===== Prelim Grade Dashboard =====\n\n";
-    output += `Lab Work Average: ${labAvg.toFixed(2)}\nClass Standing: ${classStanding.toFixed(2)}\n\n`;
-
-    function addGradeResult(label, required){
-        output += `=== ${label} ===\n`;
-        if(required>100){
-            output+=`Maximum achievable Prelim Grade: ${maxAchievable.toFixed(2)}\nRemark: <span style="color: green; font-weight: bold;">${label} is UNATTAINABLE, but the good news is you can already secure a HIGH and PASSING grade. Your maximum achievable grade is ${maxAchievable.toFixed(2)}, which guarantees your academic standing.</span>\n\n`;
-        } else if(required===100){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: red; font-weight: bold;">To achieve ${label}, you MUST score a perfect 100 on the Prelim Exam. Your current class standing leaves no room for error.</span>\n\n`;
-        } else if(required<=0){
-            output+=`No Prelim Exam score needed.\nRemark: <span style="color: green; font-weight: bold;">You have ALREADY SECURED ${label} based on your class standing alone. Any score on the Prelim Exam will only improve your grade.</span>\n\n`;
-        } else if(required<40){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: green; font-weight: bold;">To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This is VERY ACHIEVABLE with basic preparation.</span>\n\n`;
-        } else if(required<70){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: orange; font-weight: bold;">To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires MODERATE STUDY and preparation.</span>\n\n`;
-        } else{
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: red; font-weight: bold;">To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires INTENSIVE STUDY and strong performance.</span>\n\n`;
-        }
+    // Auto fail check
+    if(unexcused>=4){
+        results.innerHTML="<span style='color:red;font-weight:bold;'>===== AUTOMATIC FAILURE =====</span>" +
+        `<span style='color:red;'>Reason: You have ${unexcused} unexcused absences (4+ = fail)</span>`;
+        return;
     }
 
-    addGradeResult("PASSING (75)", requiredForPassing);
-    addGradeResult("EXCELLENT (100)", requiredForExcellent);
+    const labAvg = (lab1+lab2+lab3)/3;
+    const classStanding = attendanceGrade*0.4 + labAvg*0.6;
+    const requiredPassing = (75-classStanding*0.7)/0.3;
+    const requiredExcellent = (100-classStanding*0.7)/0.3;
+    const maxAchievable = classStanding*0.7 + 100*0.3;
 
-    results.innerHTML = output.replace(/\n/g, '<br>');
+    let output = "";
+    output += `<span style="color:blue;font-weight:bold;">===== 📊 PRELIM GRADE DASHBOARD =====</span>`;
+    output += `<span>Attendance Grade: ${attendanceGrade.toFixed(2)}</span>`;
+    output += `<span>Lab Average: ${labAvg.toFixed(2)}</span>`;
+    output += `<span>Class Standing: ${classStanding.toFixed(2)}</span>`;
+
+    function addGrade(label,required){
+        let color="black";
+        let remark="";
+        if(required>100){ color="red"; remark=`Even with perfect exam, ${label} is UNATTAINABLE. Focus on maximizing final grade.`; }
+        else if(required===100){ color="red"; remark=`To achieve ${label}, you must score 100 on the Prelim Exam. Intensive preparation required.`; }
+        else if(required<=0){ color="green"; remark=`You have already secured ${label} based on class standing.`; }
+        else if(required<40){ color="green"; remark=`Achievable with basic preparation.`; }
+        else if(required<70){ color="orange"; remark=`Requires moderate study and preparation.`; }
+        else { color="red"; remark=`Requires strong study and performance.`; }
+        output += `<span style="color:${color};font-weight:bold;">=== ${label} ===</span>`;
+        if(required>0 && required<=100) output += `<span>Required Prelim Exam: ${required.toFixed(2)}</span>`;
+        output += `<span>Remark: ${remark}</span>`;
+    }
+
+    addGrade("PASSING (75)",requiredPassing);
+    addGrade("EXCELLENT (100)",requiredExcellent);
+
+    results.innerHTML = output;
 }
 </script>
 </body>
 </html>
+
