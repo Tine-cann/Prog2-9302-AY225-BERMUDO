@@ -87,17 +87,17 @@ function calculatePrelim() {
     function addGradeResult(label, required){
         output += `=== ${label} ===\n`;
         if(required>100){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nMaximum achievable Prelim Grade: ${maxAchievable.toFixed(2)}\nRemark: Even scoring 100 on the Prelim Exam cannot reach ${label}.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nMaximum achievable Prelim Grade: ${maxAchievable.toFixed(2)}\nRemark: ${label} is UNATTAINABLE. Even with a perfect 100 score on the Prelim Exam, you can only achieve ${maxAchievable.toFixed(2)}. Your class standing is insufficient to reach this grade.\n\n`;
         } else if(required===100){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: You need a full score on the Prelim Exam to reach ${label}.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you MUST score a perfect 100 on the Prelim Exam. Your current class standing leaves no room for error.\n\n`;
         } else if(required<=0){
-            output+=`No Prelim Exam score needed.\nRemark: Current class standing is enough to reach ${label}.\n\n`;
+            output+=`No Prelim Exam score needed.\nRemark: You have ALREADY SECURED ${label} based on your class standing alone. Any score on the Prelim Exam will only improve your grade.\n\n`;
         } else if(required<40){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: Minimal effort on the Prelim Exam is enough to reach ${label}.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This is VERY ACHIEVABLE with basic preparation.\n\n`;
         } else if(required<70){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: Moderate effort on the Prelim Exam is needed to reach ${label}.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires MODERATE STUDY and preparation.\n\n`;
         } else{
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: High score on the Prelim Exam is required to reach ${label}.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires INTENSIVE STUDY and strong performance.\n\n`;
         }
     }
 
