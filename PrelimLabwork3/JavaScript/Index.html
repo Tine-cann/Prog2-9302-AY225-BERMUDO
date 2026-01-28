@@ -87,24 +87,24 @@ function calculatePrelim() {
     function addGradeResult(label, required){
         output += `=== ${label} ===\n`;
         if(required>100){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nMaximum achievable Prelim Grade: ${maxAchievable.toFixed(2)}\nRemark: ${label} is UNATTAINABLE. Even with a perfect 100 score on the Prelim Exam, you can only achieve ${maxAchievable.toFixed(2)}. Your class standing is insufficient to reach this grade.\n\n`;
+            output+=`Maximum achievable Prelim Grade: ${maxAchievable.toFixed(2)}\nRemark: <span style="color: green; font-weight: bold;">${label} is UNATTAINABLE, but the good news is you can already secure a HIGH and PASSING grade. Your maximum achievable grade is ${maxAchievable.toFixed(2)}, which guarantees your academic standing.</span>\n\n`;
         } else if(required===100){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you MUST score a perfect 100 on the Prelim Exam. Your current class standing leaves no room for error.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: red; font-weight: bold;">To achieve ${label}, you MUST score a perfect 100 on the Prelim Exam. Your current class standing leaves no room for error.</span>\n\n`;
         } else if(required<=0){
-            output+=`No Prelim Exam score needed.\nRemark: You have ALREADY SECURED ${label} based on your class standing alone. Any score on the Prelim Exam will only improve your grade.\n\n`;
+            output+=`No Prelim Exam score needed.\nRemark: <span style="color: green; font-weight: bold;">You have ALREADY SECURED ${label} based on your class standing alone. Any score on the Prelim Exam will only improve your grade.</span>\n\n`;
         } else if(required<40){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This is VERY ACHIEVABLE with basic preparation.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: green; font-weight: bold;">To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This is VERY ACHIEVABLE with basic preparation.</span>\n\n`;
         } else if(required<70){
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires MODERATE STUDY and preparation.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: orange; font-weight: bold;">To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires MODERATE STUDY and preparation.</span>\n\n`;
         } else{
-            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires INTENSIVE STUDY and strong performance.\n\n`;
+            output+=`Required Prelim Exam: ${required.toFixed(2)}\nRemark: <span style="color: red; font-weight: bold;">To achieve ${label}, you need AT LEAST ${required.toFixed(2)} on the Prelim Exam. This requires INTENSIVE STUDY and strong performance.</span>\n\n`;
         }
     }
 
     addGradeResult("PASSING (75)", requiredForPassing);
     addGradeResult("EXCELLENT (100)", requiredForExcellent);
 
-    results.innerText = output;
+    results.innerHTML = output.replace(/\n/g, '<br>');
 }
 </script>
 </body>

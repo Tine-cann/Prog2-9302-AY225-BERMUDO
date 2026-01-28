@@ -183,24 +183,23 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         addStyledText(doc, "=== " + label + " ===\n", Color.MAGENTA, true);
 
         if (requiredScore > 100) {
-            addStyledText(doc, String.format("Required Prelim Exam: %.2f\n", requiredScore), Color.RED, true);
             addStyledText(doc, String.format("Maximum achievable Prelim Grade: %.2f\n", maxAchievable), Color.BLACK, false);
-            addStyledText(doc, "Remark: " + label + " is UNATTAINABLE. Even with a perfect 100 score on the Prelim Exam, you can only achieve " + String.format("%.2f", maxAchievable) + ". Your class standing is insufficient to reach this grade.\n\n", Color.RED, false);
+            addStyledText(doc, "Remark: " + label + " is UNATTAINABLE, but the good news is you can already secure a HIGH and PASSING grade. Your maximum achievable grade is " + String.format("%.2f", maxAchievable) + ", which guarantees your academic standing.\n\n", new Color(0, 128, 0), true);
         } else if (requiredScore == 100) {
             addStyledText(doc, String.format("Required Prelim Exam: %.2f\n", requiredScore), Color.BLACK, true);
-            addStyledText(doc, "Remark: To achieve " + label + ", you MUST score a perfect 100 on the Prelim Exam. Your current class standing leaves no room for error.\n\n", Color.RED, false);
+            addStyledText(doc, "Remark: To achieve " + label + ", you MUST score a perfect 100 on the Prelim Exam. Your current class standing leaves no room for error.\n\n", Color.RED, true);
         } else if (requiredScore <= 0) {
             addStyledText(doc, "No Prelim Exam score needed to reach " + label + ".\n", new Color(0, 128, 0), true);
-            addStyledText(doc, "Remark: You have ALREADY SECURED " + label + " based on your class standing alone. Any score on the Prelim Exam will only improve your grade.\n\n", new Color(0, 128, 0), false);
+            addStyledText(doc, "Remark: You have ALREADY SECURED " + label + " based on your class standing alone. Any score on the Prelim Exam will only improve your grade.\n\n", new Color(0, 128, 0), true);
         } else if (requiredScore < 40) {
             addStyledText(doc, String.format("Required Prelim Exam: %.2f\n", requiredScore), Color.BLACK, true);
-            addStyledText(doc, "Remark: To achieve " + label + ", you need AT LEAST " + String.format("%.2f", requiredScore) + " on the Prelim Exam. This is VERY ACHIEVABLE with basic preparation.\n\n", new Color(0, 128, 0), false);
+            addStyledText(doc, "Remark: To achieve " + label + ", you need AT LEAST " + String.format("%.2f", requiredScore) + " on the Prelim Exam. This is VERY ACHIEVABLE with basic preparation.\n\n", new Color(0, 128, 0), true);
         } else if (requiredScore < 70) {
             addStyledText(doc, String.format("Required Prelim Exam: %.2f\n", requiredScore), Color.BLACK, true);
-            addStyledText(doc, "Remark: To achieve " + label + ", you need AT LEAST " + String.format("%.2f", requiredScore) + " on the Prelim Exam. This requires MODERATE STUDY and preparation.\n\n", new Color(255, 140, 0), false);
+            addStyledText(doc, "Remark: To achieve " + label + ", you need AT LEAST " + String.format("%.2f", requiredScore) + " on the Prelim Exam. This requires MODERATE STUDY and preparation.\n\n", new Color(255, 140, 0), true);
         } else {
             addStyledText(doc, String.format("Required Prelim Exam: %.2f\n", requiredScore), Color.BLACK, true);
-            addStyledText(doc, "Remark: To achieve " + label + ", you need AT LEAST " + String.format("%.2f", requiredScore) + " on the Prelim Exam. This requires INTENSIVE STUDY and strong performance.\n\n", Color.RED, false);
+            addStyledText(doc, "Remark: To achieve " + label + ", you need AT LEAST " + String.format("%.2f", requiredScore) + " on the Prelim Exam. This requires INTENSIVE STUDY and strong performance.\n\n", Color.RED, true);
         }
     }
 
