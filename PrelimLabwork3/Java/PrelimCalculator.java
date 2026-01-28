@@ -6,7 +6,6 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 
-// Filter to allow only numbers within a range
 class NumberRangeFilter extends DocumentFilter {
     private final int min, max;
     public NumberRangeFilter(int min, int max) { this.min = min; this.max = max; }
@@ -41,24 +40,22 @@ public class PrelimCalculator extends JFrame implements ActionListener {
     private JButton calculateButton;
 
     public PrelimCalculator() {
-        setTitle("📊 Prelim Grade Calculator");
-        setSize(1000,950);
+        setTitle("Prelim Grade Calculator");
+        setSize(950,900);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(15,15));
         getContentPane().setBackground(new Color(245,245,245));
 
-        // Fonts
-        Font sectionFont = new Font("Segoe UI Emoji", Font.BOLD, 16); // Emoji-capable font
+        Font sectionFont = new Font("Segoe UI Emoji", Font.BOLD, 16);
         Font labelFont = new Font("Segoe UI Emoji", Font.PLAIN, 14);
 
-        // --- Main panel ---
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(new EmptyBorder(15,15,15,15));
         mainPanel.setBackground(new Color(245,245,245));
 
-        // --- Enrollment Panel ---
+        // Enrollment Panel
         JPanel enrolPanel = createTitledPanel("📋 ENROLLMENT INFORMATION", sectionFont);
         enrolPanel.setLayout(new GridLayout(2,2,10,10));
         enrolPanel.add(createLabel("Enrollment Type:", labelFont));
@@ -72,7 +69,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         mainPanel.add(enrolPanel);
         mainPanel.add(Box.createVerticalStrut(10));
 
-        // --- Absence Panel ---
+        // Absence Panel
         JPanel absencePanel = createTitledPanel("📋 ABSENCE INFORMATION", sectionFont);
         absencePanel.setLayout(new GridLayout(3,2,10,10));
         absencePanel.add(createLabel("Did you have absences?", labelFont));
@@ -90,7 +87,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         mainPanel.add(absencePanel);
         mainPanel.add(Box.createVerticalStrut(10));
 
-        // --- Lab Panel ---
+        // Lab Panel
         JPanel labPanel = createTitledPanel("📚 LAB WORK SCORES", sectionFont);
         labPanel.setLayout(new GridLayout(3,2,10,10));
         labPanel.add(createLabel("Lab Work 1 (0-100):", labelFont));
@@ -108,15 +105,15 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         mainPanel.add(labPanel);
         mainPanel.add(Box.createVerticalStrut(15));
 
-        // --- Result Panel ---
+        // Result Panel
         resultPane = new JTextPane();
         resultPane.setEditable(false);
         resultPane.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(resultPane);
-        scrollPane.setPreferredSize(new Dimension(900,400));
+        scrollPane.setPreferredSize(new Dimension(800,350));
         mainPanel.add(scrollPane);
 
-        // --- Calculate button ---
+        // Calculate button
         calculateButton = new JButton("Calculate Prelim Exam Requirements");
         calculateButton.setFont(new Font("Segoe UI",Font.BOLD,16));
         calculateButton.setBackground(new Color(0,123,255));
@@ -132,7 +129,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
 
         add(mainPanel, BorderLayout.CENTER);
 
-        // --- Filters ---
+        // Filters
         ((AbstractDocument)startWeekField.getDocument()).setDocumentFilter(new NumberRangeFilter(1,5));
         ((AbstractDocument)excusedField.getDocument()).setDocumentFilter(new NumberRangeFilter(0,5));
         ((AbstractDocument)unexcusedField.getDocument()).setDocumentFilter(new NumberRangeFilter(0,5));
@@ -140,12 +137,13 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         ((AbstractDocument)lab2Field.getDocument()).setDocumentFilter(new NumberRangeFilter(0,100));
         ((AbstractDocument)lab3Field.getDocument()).setDocumentFilter(new NumberRangeFilter(0,100));
 
-        // --- Initial locking ---
-        startWeekField.setEnabled(false); startWeekField.setEditable(false);
-        excusedField.setEnabled(false); excusedField.setEditable(false);
-        unexcusedField.setEnabled(false); unexcusedField.setEditable(false);
+        // Initial locking
+        startWeekField.setEnabled(false);
+        startWeekField.setEditable(false);
+        excusedField.setEnabled(false);
+        unexcusedField.setEnabled(false);
 
-        // --- Action listeners for enabling fields ---
+        // Action listeners
         enrolleeType.addActionListener(a->{
             boolean late = enrolleeType.getSelectedIndex()==1;
             startWeekField.setEnabled(late); startWeekField.setEditable(late);
@@ -154,8 +152,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
 
         absenceChoice.addActionListener(a->{
             boolean hasAbs = absenceChoice.getSelectedIndex()==1;
-            excusedField.setEnabled(hasAbs); excusedField.setEditable(hasAbs);
-            unexcusedField.setEnabled(hasAbs); unexcusedField.setEditable(hasAbs);
+            excusedField.setEnabled(hasAbs); unexcusedField.setEnabled(hasAbs);
             if(!hasAbs){ excusedField.setText(""); unexcusedField.setText(""); }
         });
 
@@ -170,9 +167,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
 
     private JPanel createTitledPanel(String title, Font font){
         JPanel p = new JPanel();
-        TitledBorder tb = BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY,2), 
-                title, TitledBorder.LEFT, TitledBorder.TOP, font, new Color(0,102,204));
+        TitledBorder tb = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,2), title, TitledBorder.LEFT, TitledBorder.TOP, font, new Color(0,102,204));
         p.setBorder(tb);
         p.setBackground(Color.WHITE);
         return p;
@@ -181,7 +176,6 @@ public class PrelimCalculator extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e){
         try{
-            // --- Read inputs ---
             double lab1 = Double.parseDouble(lab1Field.getText());
             double lab2 = Double.parseDouble(lab2Field.getText());
             double lab3 = Double.parseDouble(lab3Field.getText());
@@ -190,29 +184,21 @@ public class PrelimCalculator extends JFrame implements ActionListener {
             int unexcused = unexcusedField.getText().isEmpty()?0:Integer.parseInt(unexcusedField.getText());
 
             boolean late = enrolleeType.getSelectedIndex()==1;
-            int startWeek = 1;
-            if(late){
-                if(startWeekField.getText().isEmpty()){
-                    JOptionPane.showMessageDialog(this,"Please fill in the start week for Late Enrollees.");
-                    return;
-                }
-                startWeek = Integer.parseInt(startWeekField.getText());
-            }
+            int startWeek = late ? Integer.parseInt(startWeekField.getText()) : 1;
+            int totalWeeks = late ? 6 - startWeek : 5;
 
-            StyledDocument doc = resultPane.getStyledDocument();
-            doc.remove(0,doc.getLength());
-
-            // --- Calculate attendance grade ---
-            // Each unexcused absence reduces 20%
-            if(unexcused>=4){
+            // Auto-fail if unexcused >= 4
+            if(unexcused >= 4){
+                StyledDocument doc = resultPane.getStyledDocument();
+                doc.remove(0,doc.getLength());
                 add(doc,"===== AUTOMATIC FAILURE =====\n\n",Color.RED,true);
                 add(doc,"Reason: You have "+unexcused+" unexcused absences. 4 or more = automatic failure.\n",Color.RED,true);
                 return;
             }
 
-            double totalWeeks = late ? 6-startWeek : 5; // weeks available
-            double weeksAttended = totalWeeks - (excused + unexcused);
-            double attendanceGrade = Math.max(0, 100 - unexcused*20);
+            // Attendance grade based purely on absences
+            double attendanceGrade = ((double)(totalWeeks - unexcused) / totalWeeks) * 100;
+            attendanceGrade = Math.max(0, attendanceGrade);
 
             double labAvg = (lab1+lab2+lab3)/3.0;
             double classStanding = attendanceGrade*0.4 + labAvg*0.6;
@@ -221,8 +207,11 @@ public class PrelimCalculator extends JFrame implements ActionListener {
             double requiredExcellent = (100 - classStanding*0.7)/0.3;
             double maxAchievable = classStanding*0.7 + 100*0.3;
 
+            StyledDocument doc = resultPane.getStyledDocument();
+            doc.remove(0,doc.getLength());
             add(doc,"===== 📊 PRELIM GRADE DASHBOARD =====\n\n",Color.BLUE,true);
-            add(doc,String.format("Attendance Grade: %.2f\nLab Average: %.2f\nClass Standing: %.2f\n\n",attendanceGrade,labAvg,classStanding),Color.BLACK,false);
+            add(doc,String.format("Attendance Grade: %.2f\nExcused: %d | Unexcused: %d | Total Weeks: %d\nLab Average: %.2f\nClass Standing: %.2f\n\n",
+                    attendanceGrade, excused, unexcused, totalWeeks, labAvg, classStanding),Color.BLACK,false);
 
             addGradeResult(doc,"PASSING (75)",requiredPassing,maxAchievable);
             addGradeResult(doc,"EXCELLENT (100)",requiredExcellent,maxAchievable);
@@ -236,8 +225,8 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         add(doc,"=== "+label+" ===\n",Color.MAGENTA,true);
         if(required>100){
             add(doc,String.format("Max Achievable: %.2f\n",max),Color.BLACK,false);
-            add(doc,"Remark: Even with perfect Prelim Exam, achieving "+label+" is impossible.\n",Color.RED,true);
-            add(doc,"Do your best to maximize final grade.\n\n",new Color(0,128,0),false);
+            add(doc,"Remark: Even with a perfect Prelim Exam, achieving "+label+" is impossible.\n",Color.RED,true);
+            add(doc,"Do your best to maximize your final grade.\n\n",new Color(0,128,0),false);
         }else if(required==100){
             add(doc,"Required Prelim Exam Score: 100\n",Color.BLACK,true);
             add(doc,"Remark: You must score perfectly to reach "+label+".\n",Color.RED,true);
@@ -268,5 +257,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         SwingUtilities.invokeLater(PrelimCalculator::new);
     }
 }
+
+
 
 
