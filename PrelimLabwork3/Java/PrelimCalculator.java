@@ -1,10 +1,12 @@
+// File: PrelimCalculator.java
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 
-// Filter to allow only numbers in text fields
+// Filter to allow only numbers within a range
 class NumberRangeFilter extends DocumentFilter {
     private final int min, max;
     public NumberRangeFilter(int min, int max) { this.min = min; this.max = max; }
@@ -39,8 +41,8 @@ public class PrelimCalculator extends JFrame implements ActionListener {
     private JButton calculateButton;
 
     public PrelimCalculator() {
-        setTitle("Prelim Grade Calculator");
-        setSize(950,900);
+        setTitle("📊 Prelim Grade Calculator");
+        setSize(1000,950);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(15,15));
@@ -111,7 +113,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         resultPane.setEditable(false);
         resultPane.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(resultPane);
-        scrollPane.setPreferredSize(new Dimension(800,350));
+        scrollPane.setPreferredSize(new Dimension(900,400));
         mainPanel.add(scrollPane);
 
         // --- Calculate button ---
@@ -140,7 +142,8 @@ public class PrelimCalculator extends JFrame implements ActionListener {
 
         // --- Initial locking ---
         startWeekField.setEnabled(false); startWeekField.setEditable(false);
-        excusedField.setEnabled(false); unexcusedField.setEnabled(false);
+        excusedField.setEnabled(false); excusedField.setEditable(false);
+        unexcusedField.setEnabled(false); unexcusedField.setEditable(false);
 
         // --- Action listeners for enabling fields ---
         enrolleeType.addActionListener(a->{
@@ -151,7 +154,8 @@ public class PrelimCalculator extends JFrame implements ActionListener {
 
         absenceChoice.addActionListener(a->{
             boolean hasAbs = absenceChoice.getSelectedIndex()==1;
-            excusedField.setEnabled(hasAbs); unexcusedField.setEnabled(hasAbs);
+            excusedField.setEnabled(hasAbs); excusedField.setEditable(hasAbs);
+            unexcusedField.setEnabled(hasAbs); unexcusedField.setEditable(hasAbs);
             if(!hasAbs){ excusedField.setText(""); unexcusedField.setText(""); }
         });
 
@@ -166,7 +170,9 @@ public class PrelimCalculator extends JFrame implements ActionListener {
 
     private JPanel createTitledPanel(String title, Font font){
         JPanel p = new JPanel();
-        TitledBorder tb = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,2), title, TitledBorder.LEFT, TitledBorder.TOP, font, new Color(0,102,204));
+        TitledBorder tb = BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY,2), 
+                title, TitledBorder.LEFT, TitledBorder.TOP, font, new Color(0,102,204));
         p.setBorder(tb);
         p.setBackground(Color.WHITE);
         return p;
@@ -175,6 +181,7 @@ public class PrelimCalculator extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e){
         try{
+            // --- Read inputs ---
             double lab1 = Double.parseDouble(lab1Field.getText());
             double lab2 = Double.parseDouble(lab2Field.getText());
             double lab3 = Double.parseDouble(lab3Field.getText());
@@ -182,17 +189,31 @@ public class PrelimCalculator extends JFrame implements ActionListener {
             int excused = excusedField.getText().isEmpty()?0:Integer.parseInt(excusedField.getText());
             int unexcused = unexcusedField.getText().isEmpty()?0:Integer.parseInt(unexcusedField.getText());
 
+            boolean late = enrolleeType.getSelectedIndex()==1;
+            int startWeek = 1;
+            if(late){
+                if(startWeekField.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(this,"Please fill in the start week for Late Enrollees.");
+                    return;
+                }
+                startWeek = Integer.parseInt(startWeekField.getText());
+            }
+
             StyledDocument doc = resultPane.getStyledDocument();
             doc.remove(0,doc.getLength());
 
-            // --- Auto fail: unexcused >=4 ---
+            // --- Calculate attendance grade ---
+            // Each unexcused absence reduces 20%
             if(unexcused>=4){
                 add(doc,"===== AUTOMATIC FAILURE =====\n\n",Color.RED,true);
                 add(doc,"Reason: You have "+unexcused+" unexcused absences. 4 or more = automatic failure.\n",Color.RED,true);
                 return;
             }
 
-            double attendanceGrade = Math.max(0,100-(unexcused*20));
+            double totalWeeks = late ? 6-startWeek : 5; // weeks available
+            double weeksAttended = totalWeeks - (excused + unexcused);
+            double attendanceGrade = Math.max(0, 100 - unexcused*20);
+
             double labAvg = (lab1+lab2+lab3)/3.0;
             double classStanding = attendanceGrade*0.4 + labAvg*0.6;
 
@@ -247,4 +268,5 @@ public class PrelimCalculator extends JFrame implements ActionListener {
         SwingUtilities.invokeLater(PrelimCalculator::new);
     }
 }
+
 
