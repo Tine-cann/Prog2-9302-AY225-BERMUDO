@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Records - Kristine Bermudo 23-1260-868</title>
+<style>
+    body { font-family: "Segoe UI", sans-serif; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f0f0f0; }
+    input[type="text"] { padding: 5px; font-size: 14px; }
+    input.wide { width: 180px; } /* make input fields wider */
+    #grades { width: 250px; }
+    button { padding: 6px 12px; font-size: 14px; margin-left: 5px; cursor: pointer; }
+    button.add { background-color: #3b59b6; color: white; border: none; }
+    button.add:hover { background-color: #1e3c96; }
+    button.delete { background-color: #dc3232; color: white; border: none; }
+    button.delete:hover { background-color: #b41e1e; }
+    footer { margin-top: 20px; font-weight: bold; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>Records - Kristine Bermudo 23-1260-868</h1>
+
+<!-- Input Form -->
+<div>
+    <label>ID: <input type="text" id="id" class="wide"></label>
+    <label>First Name: <input type="text" id="firstName" class="wide"></label>
+    <label>Last Name: <input type="text" id="lastName" class="wide"></label>
+    <label>Grades (comma-separated): <input type="text" id="grades"></label>
+    <button class="add" id="addBtn">Add</button>
+</div>
+
+<!-- Table -->
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Average Grade</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+        <!-- Rows will be generated dynamically -->
+    </tbody>
+</table>
+
+<footer>Kristine Bermudo 23-1260-868</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
