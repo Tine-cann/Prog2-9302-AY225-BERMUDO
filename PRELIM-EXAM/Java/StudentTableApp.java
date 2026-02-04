@@ -1,6 +1,10 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.io.*;
 
@@ -12,7 +16,7 @@ public class StudentTableApp extends JFrame {
 
     private DefaultTableModel model;
     private JTable table;
-    private JTextField idField, firstNameField, lastNameField, gradeField;
+    private JTextField idField, nameField, gradeField;
     private JButton addButton, deleteButton;
 
     private final String DEFAULT_CSV = "/MOCK_DATA.csv";  // bundled in resources
@@ -62,17 +66,48 @@ public class StudentTableApp extends JFrame {
         idField.setFont(fieldFont);
         idField.setPreferredSize(new Dimension(100, 30));
 
-        firstNameField = new JTextField();
-        firstNameField.setFont(fieldFont);
-        firstNameField.setPreferredSize(new Dimension(180, 30));
-
-        lastNameField = new JTextField();
-        lastNameField.setFont(fieldFont);
-        lastNameField.setPreferredSize(new Dimension(180, 30));
+        nameField = new JTextField();
+        nameField.setFont(fieldFont);
+        nameField.setPreferredSize(new Dimension(360, 30));
 
         gradeField = new JTextField();
         gradeField.setFont(fieldFont);
         gradeField.setPreferredSize(new Dimension(250, 30)); 
+
+        // ----- Input Filters -----
+        // ID: digits only
+        ((AbstractDocument) idField.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+                StringBuilder sb = new StringBuilder(fb.getDocument().getText(0, fb.getDocument().getLength()));
+                sb.insert(offset, string);
+                if (sb.toString().matches("\\d*")) super.insertString(fb, offset, string, attr);
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                StringBuilder sb = new StringBuilder(fb.getDocument().getText(0, fb.getDocument().getLength()));
+                sb.replace(offset, offset + length, text == null ? "" : text);
+                if (sb.toString().matches("\\d*")) super.replace(fb, offset, length, text, attrs);
+            }
+        });
+
+        // Name: letters and spaces only (no digits / special chars)
+        ((AbstractDocument) nameField.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+                StringBuilder sb = new StringBuilder(fb.getDocument().getText(0, fb.getDocument().getLength()));
+                sb.insert(offset, string);
+                if (sb.toString().matches("[a-zA-Z ]*")) super.insertString(fb, offset, string, attr);
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                StringBuilder sb = new StringBuilder(fb.getDocument().getText(0, fb.getDocument().getLength()));
+                sb.replace(offset, offset + length, text == null ? "" : text);
+                if (sb.toString().matches("[a-zA-Z ]*")) super.replace(fb, offset, length, text, attrs);
+            }
+        });
 
         addButton = new JButton("Add");
         addButton.setFont(buttonFont);
@@ -93,17 +128,14 @@ public class StudentTableApp extends JFrame {
         gbc.gridx = 0; gbc.gridy = 0; inputPanel.add(new JLabel("ID:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0; inputPanel.add(idField, gbc);
 
-        gbc.gridx = 2; gbc.weightx = 0.0; inputPanel.add(new JLabel("First Name:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0; inputPanel.add(firstNameField, gbc);
+        gbc.gridx = 2; gbc.weightx = 0.0; inputPanel.add(new JLabel("Name:"), gbc);
+        gbc.gridx = 3; gbc.weightx = 1.0; inputPanel.add(nameField, gbc);
 
-        gbc.gridx = 4; gbc.weightx = 0.0; inputPanel.add(new JLabel("Last Name:"), gbc);
-        gbc.gridx = 5; gbc.weightx = 1.0; inputPanel.add(lastNameField, gbc);
+        gbc.gridx = 4; gbc.weightx = 0.0; inputPanel.add(new JLabel("Grades (comma-separated):"), gbc);
+        gbc.gridx = 5; gbc.weightx = 1.0; inputPanel.add(gradeField, gbc);
 
-        gbc.gridx = 6; gbc.weightx = 0.0; inputPanel.add(new JLabel("Grades (comma-separated):"), gbc);
-        gbc.gridx = 7; gbc.weightx = 1.0; inputPanel.add(gradeField, gbc);
-
-        gbc.gridx = 8; gbc.weightx = 0.0; inputPanel.add(addButton, gbc);
-        gbc.gridx = 9; gbc.weightx = 0.0; inputPanel.add(deleteButton, gbc);
+        gbc.gridx = 6; gbc.weightx = 0.0; inputPanel.add(addButton, gbc);
+        gbc.gridx = 7; gbc.weightx = 0.0; inputPanel.add(deleteButton, gbc);
 
         add(inputPanel, BorderLayout.SOUTH);
 
@@ -168,11 +200,10 @@ public class StudentTableApp extends JFrame {
     // ----- Add Row -----
     private void addRow() {
         String id = idField.getText().trim();
-        String firstName = firstNameField.getText().trim();
-        String lastName = lastNameField.getText().trim();
+        String fullName = nameField.getText().trim();
         String gradesText = gradeField.getText().trim();
 
-        if (id.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || gradesText.isEmpty()) {
+        if (id.isEmpty() || fullName.isEmpty() || gradesText.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields.");
             return;
         }
@@ -180,11 +211,10 @@ public class StudentTableApp extends JFrame {
         double average = computeAverage(gradesText);
         if (average < 0) return;
 
-        String fullName = firstName + " " + lastName;
         // Store the raw grades in the hidden 4th column so we can persist them
         model.addRow(new String[]{id, fullName, String.format("%.2f", average), gradesText});
 
-        idField.setText(""); firstNameField.setText(""); lastNameField.setText(""); gradeField.setText("");
+        idField.setText(""); nameField.setText(""); gradeField.setText("");
     }
 
     // ----- Compute average from comma-separated grades -----
