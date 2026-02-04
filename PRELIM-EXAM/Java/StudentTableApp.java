@@ -167,12 +167,27 @@ public class StudentTableApp extends JFrame {
             br.readLine(); // skip first line (header)
             String line;
             while ((line = br.readLine()) != null) {
+                // Try to support both old (ID,First,Last,Grades) and new (ID,Name,Grades) formats
+                String name = null;
+                String gradesField = null;
+
                 String[] parts = line.split(",", 4);
                 if (parts.length == 4) {
-                    String fullName = parts[1] + " " + parts[2];
-                    double avg = computeAverage(parts[3]);
-                    // Store: ID, FullName, Average (formatted), Raw Grades
-                    model.addRow(new String[]{parts[0], fullName, String.format("%.2f", avg), parts[3]});
+                    // old format: First and Last name separate
+                    name = parts[1] + " " + parts[2];
+                    gradesField = parts[3];
+                } else {
+                    // try new format: ID,Name,Grades (grades may contain commas)
+                    parts = line.split(",", 3);
+                    if (parts.length >= 3) {
+                        name = parts[1];
+                        gradesField = parts[2];
+                    }
+                }
+
+                if (name != null && gradesField != null) {
+                    double avg = computeAverage(gradesField);
+                    model.addRow(new String[]{parts[0], name, String.format("%.2f", avg), gradesField});
                 }
             }
         } catch (IOException e) {
@@ -183,14 +198,12 @@ public class StudentTableApp extends JFrame {
     // ----- Save table to CSV -----
     private void saveCSV() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_CSV))) {
-            pw.println("ID,First Name,Last Name,Grades");
+            pw.println("ID,Name,Grades");
             for (int i = 0; i < model.getRowCount(); i++) {
-                String[] nameParts = model.getValueAt(i, 1).toString().split(" ", 2);
-                String firstName = nameParts[0];
-                String lastName = nameParts.length > 1 ? nameParts[1] : "";
+                String name = model.getValueAt(i, 1).toString();
                 // Save the raw grades (column index 3) so next load can recompute averages
                 String rawGrades = model.getValueAt(i, 3) != null ? model.getValueAt(i, 3).toString() : "";
-                pw.println(model.getValueAt(i, 0) + "," + firstName + "," + lastName + "," + rawGrades);
+                pw.println(model.getValueAt(i, 0) + "," + name + "," + rawGrades);
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error saving CSV: " + e.getMessage());

@@ -4,7 +4,7 @@ Author: Kristine Bermudo 23-1260-868
 
 // ----- Hardcoded CSV data as a multi-line string -----
 const csvData = `
-ID,First Name,Last Name,Grades
+ID,Name,Grades
 073900438,Osbourne,Wakenshaw,69,5,52,12,78
 114924014,Albie,Gierardi,58,92,16,57,97
 111901632,Eleen,Pentony,43,81,34,36,16
@@ -1011,15 +1011,28 @@ ID,First Name,Last Name,Grades
 // ----- Parse CSV into array of objects -----
 let students = [];
 csvData.trim().split('\n').slice(1).forEach(line => {
+    // support both old (ID,First,Last,Grades...) and new (ID,Name,Grades...)
     const parts = line.split(',');
-    // raw grade strings (preserve original order)
-    const gradeRawParts = parts.slice(3).map(g => g.trim()).filter(g => g !== '');
+    let name = '';
+    const gradeRawParts = [];
+    if (parts.length >= 4) {
+        // old style: ID,First,Last,grades...
+        name = (parts[1] + ' ' + parts[2]).trim();
+        gradeRawParts.push(...parts.slice(3).map(g => g.trim()).filter(g => g !== ''));
+    } else {
+        // try new style: ID,Name,grades...
+        const p = line.split(',', 3);
+        if (p.length >= 3) {
+            name = p[1].trim();
+            gradeRawParts.push(...p[2].split(',').map(g => g.trim()).filter(g => g !== ''));
+        }
+    }
+
     const grades = gradeRawParts.map(g => parseFloat(g));
     const avg = grades.length ? grades.reduce((a,b)=>a+b,0)/grades.length : 0;
     students.push({
         id: parts[0].trim(),
-        firstName: parts[1].trim(),
-        lastName: parts[2].trim(),
+        name: name,
         average: avg.toFixed(2),
         gradesRaw: gradeRawParts.join(',')
     });
@@ -1037,7 +1050,7 @@ function render() {
 
         tr.innerHTML = `
             <td>${student.id}</td>
-            <td>${student.firstName} ${student.lastName}</td>
+            <td>${student.name}</td>
             <td>${student.average}</td>
             <td style="display:none" class="rawGrades">${student.gradesRaw || ''}</td>
             <td><button class="delete">Delete</button></td>
@@ -1059,11 +1072,9 @@ function render() {
 // ----- Add new student -----
 function addStudent() {
     const id = document.getElementById('id').value.trim();
-    const firstName = document.getElementById('firstName').value.trim();
-    const lastName = document.getElementById('lastName').value.trim();
+    const name = document.getElementById('name').value.trim();
     const gradesText = document.getElementById('grades').value.trim();
-
-    if (!id || !firstName || !lastName || !gradesText) {
+    if (!id || !name || !gradesText) {
         alert("Please fill in all fields.");
         return;
     }
@@ -1076,12 +1087,21 @@ function addStudent() {
     }
     const average = (gradeParts.reduce((a,b)=>a+b,0)/gradeParts.length).toFixed(2);
 
-    students.push({id, firstName, lastName, average, gradesRaw: gradePartsRaw.join(',')});
+    // Basic input validation: id digits-only, name letters+spaces only
+    if (!/^\d+$/.test(id)) {
+        alert('ID must contain digits only.');
+        return;
+    }
+    if (!/^[A-Za-z ]+$/.test(name)) {
+        alert('Name must contain letters and spaces only.');
+        return;
+    }
+
+    students.push({id, name, average, gradesRaw: gradePartsRaw.join(',')});
 
     // Clear inputs
     document.getElementById('id').value = '';
-    document.getElementById('firstName').value = '';
-    document.getElementById('lastName').value = '';
+    document.getElementById('name').value = '';
     document.getElementById('grades').value = '';
 
     render();
@@ -1101,11 +1121,11 @@ render();
 
 // ----- Export CSV (includes raw grades) -----
 function exportCSV() {
-    const header = ['ID','First Name','Last Name','Grades'];
+    const header = ['ID','Name','Grades'];
     const lines = [header.join(',')];
     students.forEach(s => {
         const gradesField = s.gradesRaw ? s.gradesRaw : '';
-        lines.push([s.id, s.firstName, s.lastName, gradesField].join(','));
+        lines.push([s.id, s.name, gradesField].join(','));
     });
     const csv = lines.join('\n');
     const blob = new Blob([csv], {type: 'text/csv'});
@@ -1132,4 +1152,18 @@ else {
         addBtn.parentNode.insertBefore(exp, addBtn.nextSibling);
         exp.addEventListener('click', exportCSV);
     }
+}
+
+// Input listeners to restrict characters while typing
+const idInput = document.getElementById('id');
+const nameInput = document.getElementById('name');
+if (idInput) {
+    idInput.addEventListener('input', () => {
+        idInput.value = idInput.value.replace(/[^0-9]/g, '');
+    });
+}
+if (nameInput) {
+    nameInput.addEventListener('input', () => {
+        nameInput.value = nameInput.value.replace(/[^A-Za-z ]/g, '');
+    });
 }
